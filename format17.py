@@ -2,12 +2,12 @@
 
 import os
 import sys
-import Image
+from PIL import Image
 
 try :
 	arg = sys.argv[1]
 except IndexError :
-	print "Usage: format17.py <file|dir>"
+	print("Usage: format17.py <file|dir>")
 	sys.exit(1)
 
 skins = [arg]
@@ -29,8 +29,8 @@ for sfile in skins :
 	else :
 		w, h = imi.size
 		if h == w and h >= 64 :
-			imo = Image.new("RGBA", (w, h / 2))
-			box = (0, 0, w, h / 2)
+			imo = Image.new("RGBA", (w, int(h / 2)))
+			box = (0, 0, w, int(h / 2))
 			imo.paste(imi.crop(box), box)
 			imo.save(sfile)
 			success += 1
@@ -38,4 +38,4 @@ for sfile in skins :
 			failure += 1
 
 if success == 1 : pl = ""
-print "%i skin%s successfully converted, %i failed" % (success, pl, failure)
+print("%i skin%s successfully converted, %i failed" % (success, pl, failure))
