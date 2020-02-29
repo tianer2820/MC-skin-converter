@@ -151,7 +151,6 @@ class Skin:
     """
     def fixLeftArm(self):
         leftArmImage = self.leftArm
-        #imageDraw =  ImageDraw.Draw(rightArmImage)
         #move hand
         self.cutAndMoveImage(leftArmImage, (7,0), (3,4), (9,0))
         #move side arm1
@@ -178,7 +177,17 @@ class Skin:
         position2 = (position[0]+size[0]-1,position[1]+size[1]-1)
         imageDraw.rectangle(position + position2,(0,0,0,0)) #clean
         image.paste(cropImage, target)
-        
+      
+    """
+    :return: Pillow.Image
+    """
+    def getOutput(self):
+        image = Image.new("RGBA", (64, 64))
+        for element in SkinMeta.elements:
+            subImage = getattr(self, element)
+            position = getattr(SkinMeta, element).position
+            image.paste(subImage, position)
+        return image
 
 #rectangular regions of default skin
 cropTable={
@@ -256,7 +265,9 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
+    skin.fixRightArm()
     skin.fixLeftArm()
+    skin.getOutput().save(filePath + ".output.png")
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
