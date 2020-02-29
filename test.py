@@ -24,6 +24,26 @@ cropTable2={
     "left-leg":(0,48,15,63)
 }
 
+def checkTransparentInArea(image, box):
+    for x in range(box[0],box[2]):
+        for y in range(box[1],box[3]):
+            r,g,b,a = image.getpixel((x,y));
+            if(a==0):
+                return True
+    return False
+
+def isFemale(rightArmImage):
+    areas=[
+      (10,0,11,3),#x0, y0, x1, y1
+      (14,4,15,5)
+    ]
+    for area in areas:
+        if(checkTransparentInArea(rightArmImage, area)):
+            return True
+    return False
+
+
+
 def getCrops(image):
     defaultSet={}
     for key in cropTable.keys():
@@ -55,7 +75,13 @@ def processSkin(filePath):
     if(width!=64 or height!=64):
         print("file size wrong, skip: "+filePath);
         return
-    print(image.getpixel((0,8)))
+    
+    skinSet = getCrops(image)
+    if(isFemale(skinSet['default']['right-arm'])):
+        print('is female!')
+    else:
+        print('is male!')
+    #print(image.getpixel((0,8)))
     #testSplit(filePath,image)
     
     
