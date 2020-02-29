@@ -41,31 +41,13 @@ class SkinMeta:
     leftLeg2 = Area((0,48,16,16))
 
 class Skin:
-
-    cropTable=[
-        #rectangular regions of default skin
-        {
-            "head":(0,0,31,15),
-            "body":(16,16,39,31),
-            "right-arm":(40,16,55,31),
-            "left-arm":(32,48,47,63),
-            "right-leg":(0,16,15,31),
-            "left-leg":(16,48,31,63)
-        },
-        #rectangular regions of overlay skin
-        {
-            "head":(32,0,63,15),
-            "body":(16,32,39,47),
-            "right-arm":(40,32,55,47),
-            "left-arm":(48,48,63,63),
-            "right-leg":(0,32,15,47),
-            "left-leg":(0,48,15,63)
-        }
-    ]
-
     def __init__(self, image):
         self.loadSkin(image)
 
+    """
+    Split an image as different part of skin.
+    :param image: Pillow.Image
+    """
     def loadSkin(self, image):
         for element in SkinMeta.elements:
             position = getattr(SkinMeta, element).position
@@ -73,10 +55,8 @@ class Skin:
             subImage = self.cropImage(image, position, size)
             setattr(self, element, subImage)
             #test
-            subImage.save("HHHHH." +element +".png")
+            #subImage.save("HHHHH." +element +".png")
             
-
-        
     """
     Crop image by location and size.
     
@@ -129,7 +109,7 @@ class Skin:
     Check isn't female skin?
     """
     def isFemale(self):
-        rightArmImage = self.skin['default']['right-arm']
+        rightArmImage = self.rightArm
         #x0, y0, x1, y1
         areas=[
           (10,0,11,3),
@@ -140,17 +120,28 @@ class Skin:
                 return True
         return False
 
-    def fixArm(self):
-        rightArmImage = self.skin['default']['right-arm']
+    """
+    The female skin has lost 1 pixel of arm,
+    and older skin do not support it.
+    """
+    def fixRightArm(self):
+        rightArmImage = self.rightArm
         imageDraw =  ImageDraw.Draw(rightArmImage)
         #fix yaw
-        handImage = self.crop(rightArmImage, (7,0,9,3))
-        imageDraw.rectangle((7,0,9,3),(0,0,0,0))
-        sideArmImage = self.crop(rightArmImage, (7,4,13,15))
-        imageDraw.rectangle((7,4,13,15),(0,0,0,0))
+        handImage = self.cropImage(rightArmImage, (7,0),(3,4))
+        sideArmImage = self.cropImage(rightArmImage, (7,4),(7,12))
+        imageDraw.rectangle((7,0,15,15),(0,0,0,0))#clean right side
         rightArmImage.paste(handImage,(8,0))
         rightArmImage.paste(sideArmImage,(9,4))
-        rightArmImage.save('test0000111.png')
+        #fill blank
+        fill1 = self.cropImage(rightArmImage, (6,0),(1,16))
+        rightArmImage.paste(fill1,(7,0))
+        fill2 = self.cropImage(rightArmImage, (10,0),(1,4))
+        rightArmImage.paste(fill2,(11,0))
+        fill3 = self.cropImage(rightArmImage, (9,4),(1,12))
+        rightArmImage.paste(fill3,(8,4))
+        
+        #rightArmImage.save('test0000111.png')
 
     def crop(self, image, box):
         return image.crop((box[0],box[1], box[2]+1, box[3]+1))
@@ -231,7 +222,7 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    #skin.fixArm()
+    skin.fixArm()
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
