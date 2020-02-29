@@ -4,8 +4,44 @@ import os
 import sys
 from PIL import Image, ImageDraw
 
-class Skin:
+class Area:
+    def __init__(self,box):
+        self.position = (box[0], box[1])
+        self.size = (box[2], box[3])
+        self.area = box
+
+class SkinMeta:
+    elements =[
+        "head",
+        "body",
+        "rightArm",
+        "leftArm",
+        "rightLeg",
+        "leftLeg",
+        "head2",
+        "body2",
+        "rightArm2",
+        "leftArm2",
+        "rightLeg2",
+        "leftLeg2"
+    ]
     
+    head = Area((0,0,32,16))
+    body = Area((16,16,24,16))
+    rightArm = Area((40,16,16,16))
+    leftArm = Area((32,48,16,16))
+    rightLeg = Area((0,16,16,16))
+    leftLeg = Area((16,48,16,16))
+    
+    head2 = Area((32,0,32,16))
+    body2 = Area((16,32,24,16))
+    rightArm2 = Area((40,32,16,16))
+    leftArm2 = Area((48,48,16,16))
+    rightLeg2 = Area((0,32,16,16))
+    leftLeg2 = Area((0,48,16,16))
+
+class Skin:
+
     cropTable=[
         #rectangular regions of default skin
         {
@@ -28,8 +64,35 @@ class Skin:
     ]
 
     def __init__(self, image):
-        self.skin = self.getCrops(image)
+        self.loadSkin(image)
 
+    def loadSkin(self, image):
+        for element in SkinMeta.elements:
+            position = getattr(SkinMeta, element).position
+            size = getattr(SkinMeta, element).size
+            subImage = self.cropImage(image, position, size)
+            setattr(self, element, subImage)
+            #test
+            subImage.save("HHHHH." +element +".png")
+            
+
+        
+    """
+    Crop image by location and size.
+    
+    :param image: Pillow.Image
+    :param location: tuple which has two element.
+    :param size: tuple which has two element.
+    """
+    def cropImage(self, image, location, size):
+        area = [
+            location[0],
+            location[1],
+            location[0]+size[0],
+            location[1]+size[1],
+        ]
+        return image.crop(area)
+        
     """
     Split an image as different part of skin.
     """
@@ -82,10 +145,8 @@ class Skin:
         imageDraw =  ImageDraw.Draw(rightArmImage)
         #fix yaw
         handImage = self.crop(rightArmImage, (7,0,9,3))
-        #print(handImage.size)
         imageDraw.rectangle((7,0,9,3),(0,0,0,0))
         sideArmImage = self.crop(rightArmImage, (7,4,13,15))
-        #print(sideArmImage.size)
         imageDraw.rectangle((7,4,13,15),(0,0,0,0))
         rightArmImage.paste(handImage,(8,0))
         rightArmImage.paste(sideArmImage,(9,4))
@@ -170,7 +231,7 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    skin.fixArm()
+    #skin.fixArm()
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
