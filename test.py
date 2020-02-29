@@ -134,13 +134,15 @@ class Skin:
         rightArmImage.paste(handImage,(8,0))
         rightArmImage.paste(sideArmImage,(9,4))
         #fill blank
-        fill1 = self.cropImage(rightArmImage, (6,0),(1,16))
-        rightArmImage.paste(fill1,(7,0))
-        fill2 = self.cropImage(rightArmImage, (10,0),(1,4))
-        rightArmImage.paste(fill2,(11,0))
-        fill3 = self.cropImage(rightArmImage, (9,4),(1,12))
-        rightArmImage.paste(fill3,(8,4))
-        
+        missions = [
+            [(6,0),(1,16),(7,0)],#position, size, target position
+            [(10,0),(1,4),(11,0)],
+            [(9,4),(1,12),(8,4)]
+        ]
+        for mission in missions:
+            fill = self.cropImage(rightArmImage, mission[0],mission[1])
+            rightArmImage.paste(fill,mission[2])
+
         #rightArmImage.save('test0000111.png')
 
     def crop(self, image, box):
@@ -222,7 +224,7 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    skin.fixArm()
+    skin.fixRightArm()
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
