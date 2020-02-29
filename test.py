@@ -144,9 +144,41 @@ class Skin:
             rightArmImage.paste(fill,mission[2])
 
         #rightArmImage.save('test0000111.png')
+        
+    """
+    The female skin has lost 1 pixel of arm,
+    and older skin do not support it.
+    """
+    def fixLeftArm(self):
+        leftArmImage = self.leftArm
+        #imageDraw =  ImageDraw.Draw(rightArmImage)
+        #move hand
+        self.cutAndMoveImage(leftArmImage, (7,0), (3,4), (9,0))
+        #move side arm1
+        self.cutAndMoveImage(leftArmImage, (7,4), (7,12), (8,4))
+        #move shoulder and side arm
+        self.cutAndMoveImage(leftArmImage, (4,0), (3,16), (5,0))
+        
+        #fill blank
+        missions = [
+            [(5,0),(1,16),(4,0)],#position, size, target position
+            [(9,0),(1,4),(8,0)],
+            [(14,4),(1,12),(15,4)]
+        ]
+        for mission in missions:
+            fill = self.cropImage(leftArmImage, mission[0], mission[1])
+            leftArmImage.paste(fill,mission[2])
 
-    def crop(self, image, box):
-        return image.crop((box[0],box[1], box[2]+1, box[3]+1))
+        leftArmImage.save('test0000111.png')
+        
+
+    def cutAndMoveImage(self, image, position, size, target):
+        imageDraw = ImageDraw.Draw(image)
+        cropImage = self.cropImage(image, position, size)
+        position2 = (position[0]+size[0]-1,position[1]+size[1]-1)
+        imageDraw.rectangle(position + position2,(0,0,0,0)) #clean
+        image.paste(cropImage, target)
+        
 
 #rectangular regions of default skin
 cropTable={
@@ -224,7 +256,7 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    skin.fixRightArm()
+    skin.fixLeftArm()
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
