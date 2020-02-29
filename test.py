@@ -1,9 +1,10 @@
-#!/usr/bin/python 
+#!/usr/bin/env python3
 
 import os
 import sys
 from PIL import Image
 
+#rectangular regions of default skin
 cropTable={
     "head":(0,0,31,15),
     "body":(16,16,39,31),
@@ -12,6 +13,8 @@ cropTable={
     "right-leg":(0,16,15,31),
     "left-leg":(16,48,31,63)
 }
+
+#rectangular regions of overlay skin
 cropTable2={
     "head":(32,0,63,15),
     "body":(16,32,39,47),
@@ -21,9 +24,24 @@ cropTable2={
     "left-leg":(0,48,15,63)
 }
 
+def getCrops(image):
+    defaultSet={}
+    for key in cropTable.keys():
+        subImage = image.crop(cropTable[key])
+        defaultSet.update( {key : subImage} )
+    overlaySet={}
+    for key in cropTable2.keys():
+        subImage = image.crop(cropTable2[key])
+        overlaySet.update( {key : subImage} )
+    skinSet={
+        "default":defaultSet,
+        "overlay":overlaySet
+    }
+    return skinSet
+
 def testSplit(filePath, image):
-    for key in cropTable1.keys():
-        subImage = image.crop(cropTable1[key])
+    for key in cropTable.keys():
+        subImage = image.crop(cropTable[key])
         subImage.save(filePath + "." +key +".png")
 
 def processSkin(filePath):
@@ -37,7 +55,8 @@ def processSkin(filePath):
     if(width!=64 or height!=64):
         print("file size wrong, skip: "+filePath);
         return
-    testSplit(filePath,image)
+    print(image.getpixel((0,8)))
+    #testSplit(filePath,image)
     
     
     
