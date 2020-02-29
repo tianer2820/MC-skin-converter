@@ -188,6 +188,9 @@ class Skin:
             image.paste(subImage, position)
         return image
 
+    """
+    Get degraded image, which is v1.7(64*32).
+    """
     def getDegradedOutput(self):
         image = Image.new("RGBA", (64, 32))
         for element in SkinMeta.degradedElements:
@@ -195,3 +198,14 @@ class Skin:
             position = getattr(SkinMeta, element).position
             image.paste(subImage, position)
         return image
+
+    """
+    Merge overlay down.
+    """
+    def mergeDown(self):
+        self.body.paste(self.body2, (0,0), self.body2)
+        self.rightArm.paste(self.rightArm2, (0,0), self.rightArm2)
+        self.leftArm.paste(self.leftArm2, (0,0), self.leftArm2)
+        self.rightLeg.paste(self.rightLeg2, (0,0), self.rightLeg2)
+        self.leftLeg.paste(self.leftLeg2, (0,0), self.leftLeg2)
+        

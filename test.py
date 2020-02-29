@@ -20,6 +20,8 @@ def processSkin(filePath):
     skin.fixLeftArm()
     skin.getOutput().save("output." + filePath )
     skin.getDegradedOutput().save("output2." + filePath)
+    skin.mergeDown()
+    skin.getDegradedOutput().save("output3." + filePath)
     '''
     skinSet = getCrops(image)
     if(isFemale(skinSet['default']['right-arm'])):
