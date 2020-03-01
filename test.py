@@ -16,20 +16,15 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    skin.fixArms()
-    skin.getOutput().save("output." + filePath )
+    #skin.fixArms()
+    #skin.getOutput().save("output." + filePath )
+    #skin.getDegradedOutput().save("output2." + filePath)
+    #skin.mergeDown()
+    #skin.getDegradedOutput().save("output3." + filePath)
+    skin.useLeftArm()
+    #skin.getOutput().save("output." + filePath )
     skin.getDegradedOutput().save("output2." + filePath)
-    skin.mergeDown()
-    skin.getDegradedOutput().save("output3." + filePath)
-    '''
-    skinSet = getCrops(image)
-    if(isFemale(skinSet['default']['right-arm'])):
-        print('is female!')
-    else:
-        print('is male!')
-    '''
-    #print(image.getpixel((0,8)))
-    #testSplit(filePath,image)
+
     
     
     

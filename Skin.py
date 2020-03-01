@@ -106,10 +106,54 @@ class Skin:
         self.fixRightArm()
         self.fixLeftArm()
 
+    def useLeftArm(self):
+        missions ={
+          'top': [(4,0), (4,4)],  #position, size
+          'bottom': [(8,0), (4,4)],
+          'front':[(4,4), (4,12)], 
+          'back': [(12,4), (4,12)],
+          'right':[(0,4), (4,12)], 
+          'left': [(8,4), (4,12)]
+        }
+
+        for mission in missions.values():
+            self.copyReserveAndPaste(self.leftArm, self.rightArm, mission[0], mission[1])
+            
+        self.copyPasteSwitch(self.rightArm, [(0,4), (8,4)], (4,12))
+
+    def useLeftLeg(self):
+        missions ={
+          'top': [(4,0), (4,4)],  #position, size
+          'bottom': [(8,0), (4,4)],
+          'right':[(0,4), (4,12)], 
+          'front':[(4,4), (4,12)], 
+          'left': [(8,4), (4,12)],
+          'back': [(12,4), (4,12)]
+        }
+        for mission in missions.values():
+            self.copyReserveAndPaste(self.leftLeg, self.rightLeg, mission[0], mission[1])
 
     """
     ========Private stuff========
     """
+
+    """
+    
+    """
+    def copyReserveAndPaste(self, sourceImage, targetImage, position, size):
+        image = self.cropImage(sourceImage, position, size).transpose(Image.FLIP_LEFT_RIGHT)
+        targetImage.paste(image, position)
+   
+    def copyPaste(self, sourceImage, targetImage, position, size):
+        image = self.cropImage(sourceImage, position, size)
+        targetImage.paste(image, position)
+        
+    def copyPasteSwitch(self, image, positions, size):
+        image1 = self.cropImage(image, positions[0], size)
+        image2 = self.cropImage(image, positions[1], size)
+        image.paste(image2, positions[0])
+        image.paste(image1, positions[1])
+
 
     """
     The female skin has lost 1 pixel of arm,
@@ -174,6 +218,7 @@ class Skin:
         
     """
     Split an image as different part of skin.
+    
     :param image: Pillow.Image
     """
     def loadSkin(self, image):
