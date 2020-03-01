@@ -15,15 +15,20 @@ def processSkin(filePath):
     if(width!=64 or height!=64):
         print("file size wrong, skip: "+filePath);
         return
-    skin = Skin(image)
+    skin1 = Skin(image)
+    skin1.useLeftArm()
+    skin1.getOutput().save(filePath + "use-left-arm.png")
+    skin2 = Skin(image)
+    skin2.useLeftLeg()
+    skin2.getOutput().save(filePath + "use-left-leg.png")
     #skin.fixArms()
     #skin.getOutput().save("output." + filePath )
     #skin.getDegradedOutput().save("output2." + filePath)
     #skin.mergeDown()
     #skin.getDegradedOutput().save("output3." + filePath)
-    skin.useLeftArm()
+    #skin.useLeftLeg()
     #skin.getOutput().save("output." + filePath )
-    skin.getDegradedOutput().save("output2." + filePath)
+    #skin.getDegradedOutput().save("output2." + filePath)
 
     
     

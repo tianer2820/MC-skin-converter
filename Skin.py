@@ -106,6 +106,9 @@ class Skin:
         self.fixRightArm()
         self.fixLeftArm()
 
+    """
+    Use skin of left arm to replaced right arm.
+    """
     def useLeftArm(self):
         missions ={
           'top': [(4,0), (4,4)],  #position, size
@@ -121,6 +124,9 @@ class Skin:
             
         self.copyPasteSwitch(self.rightArm, [(0,4), (8,4)], (4,12))
 
+    """
+    Use skin of left leg to replaced left leg.
+    """
     def useLeftLeg(self):
         missions ={
           'top': [(4,0), (4,4)],  #position, size
@@ -132,6 +138,8 @@ class Skin:
         }
         for mission in missions.values():
             self.copyReserveAndPaste(self.leftLeg, self.rightLeg, mission[0], mission[1])
+            
+        self.copyPasteSwitch(self.rightLeg, [(0,4), (8,4)], (4,12))
 
     """
     ========Private stuff========
