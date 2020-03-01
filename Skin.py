@@ -50,66 +50,19 @@ class Skin:
         self.loadSkin(image)
 
     """
-    Split an image as different part of skin.
-    :param image: Pillow.Image
+    Merge overlay down.
     """
-    def loadSkin(self, image):
-        for element in SkinMeta.elements:
-            position = getattr(SkinMeta, element).position
-            size = getattr(SkinMeta, element).size
-            subImage = self.cropImage(image, position, size)
-            setattr(self, element, subImage)
-            
-    """
-    Crop image by location and size.
-    
-    :param image: Pillow.Image
-    :param location: tuple which has two element.
-    :param size: tuple which has two element.
-    """
-    def cropImage(self, image, location, size):
-        area = [
-            location[0],
-            location[1],
-            location[0]+size[0],
-            location[1]+size[1],
-        ]
-        return image.crop(area)
-        
-    """
-    Split an image as different part of skin.
-    """
-    def getCrops(self, image):
-        defaultSet={}
-        for key in self.cropTable[0].keys():
-            subImage = self.crop(image, cropTable[key])
-            defaultSet.update( {key : subImage} )
-        overlaySet={}
-        for key in self.cropTable[1].keys():
-            subImage = self.crop(image, cropTable2[key])
-            overlaySet.update( {key : subImage} )
-        skinSet={
-            "default":defaultSet,
-            "overlay":overlaySet
-        }
-        return skinSet
-      
-    """
-    Checking all pixel are transparent in area.
-    
-    :param image: Pillow.Image
-    :param box: tuple describe rectangular region.
-    """
-    def checkTransparentInArea(self, image, box):
-        for x in range(box[0],box[2]):
-            for y in range(box[1],box[3]):
-                r,g,b,a = image.getpixel((x,y));
-                if(a==0):
-                    return True
-        return False
+    def mergeDown(self):
+        self.body.paste(self.body2, (0,0), self.body2)
+        self.rightArm.paste(self.rightArm2, (0,0), self.rightArm2)
+        self.leftArm.paste(self.leftArm2, (0,0), self.leftArm2)
+        self.rightLeg.paste(self.rightLeg2, (0,0), self.rightLeg2)
+        self.leftLeg.paste(self.leftLeg2, (0,0), self.leftLeg2)
 
     """
     Check isn't female skin?
+    
+    :return: boolean
     """
     def isFemale(self):
         rightArmImage = self.rightArm
@@ -122,6 +75,41 @@ class Skin:
             if(checkTransparentInArea(rightArmImage, area)):
                 return True
         return False
+
+    """
+    Get entire image
+    
+    :return: Pillow.Image
+    """
+    def getOutput(self):
+        image = Image.new("RGBA", (64, 64))
+        for element in SkinMeta.elements:
+            subImage = getattr(self, element)
+            position = getattr(SkinMeta, element).position
+            image.paste(subImage, position)
+        return image
+
+    """
+    Get degraded image, which is v1.7(64*32).
+    
+    :return: Pillow.Image
+    """
+    def getDegradedOutput(self):
+        image = Image.new("RGBA", (64, 32))
+        for element in SkinMeta.degradedElements:
+            subImage = getattr(self, element)
+            position = getattr(SkinMeta, element).position
+            image.paste(subImage, position)
+        return image
+        
+    def fixArms(self):
+        self.fixRightArm()
+        self.fixLeftArm()
+
+
+    """
+    ========Private stuff========
+    """
 
     """
     The female skin has lost 1 pixel of arm,
@@ -169,43 +157,58 @@ class Skin:
             fill = self.cropImage(leftArmImage, mission[0], mission[1])
             leftArmImage.paste(fill,mission[2])
 
+    """
+    Cut image down and move it to another position
+    
+    :param image: Pillow.Image
+    :param position: tuple which has two element.
+    :param size: tuple which has two element.
+    :param target: tuple which has two element.
+    """
     def cutAndMoveImage(self, image, position, size, target):
         imageDraw = ImageDraw.Draw(image)
         cropImage = self.cropImage(image, position, size)
         position2 = (position[0]+size[0]-1,position[1]+size[1]-1)
         imageDraw.rectangle(position + position2,(0,0,0,0)) #clean
         image.paste(cropImage, target)
-      
-    """
-    Get entire image
-    :return: Pillow.Image
-    """
-    def getOutput(self):
-        image = Image.new("RGBA", (64, 64))
-        for element in SkinMeta.elements:
-            subImage = getattr(self, element)
-            position = getattr(SkinMeta, element).position
-            image.paste(subImage, position)
-        return image
-
-    """
-    Get degraded image, which is v1.7(64*32).
-    """
-    def getDegradedOutput(self):
-        image = Image.new("RGBA", (64, 32))
-        for element in SkinMeta.degradedElements:
-            subImage = getattr(self, element)
-            position = getattr(SkinMeta, element).position
-            image.paste(subImage, position)
-        return image
-
-    """
-    Merge overlay down.
-    """
-    def mergeDown(self):
-        self.body.paste(self.body2, (0,0), self.body2)
-        self.rightArm.paste(self.rightArm2, (0,0), self.rightArm2)
-        self.leftArm.paste(self.leftArm2, (0,0), self.leftArm2)
-        self.rightLeg.paste(self.rightLeg2, (0,0), self.rightLeg2)
-        self.leftLeg.paste(self.leftLeg2, (0,0), self.leftLeg2)
         
+    """
+    Split an image as different part of skin.
+    :param image: Pillow.Image
+    """
+    def loadSkin(self, image):
+        for element in SkinMeta.elements:
+            position = getattr(SkinMeta, element).position
+            size = getattr(SkinMeta, element).size
+            subImage = self.cropImage(image, position, size)
+            setattr(self, element, subImage)
+            
+    """
+    Crop image by location and size.
+    
+    :param image: Pillow.Image
+    :param location: tuple which has two element.
+    :param size: tuple which has two element.
+    """
+    def cropImage(self, image, location, size):
+        area = [
+            location[0],
+            location[1],
+            location[0]+size[0],
+            location[1]+size[1],
+        ]
+        return image.crop(area)
+
+    """
+    Checking all pixel are transparent in area.
+    
+    :param image: Pillow.Image
+    :param box: tuple describe rectangular region.
+    """
+    def checkTransparentInArea(self, image, box):
+        for x in range(box[0],box[2]):
+            for y in range(box[1],box[3]):
+                r,g,b,a = image.getpixel((x,y));
+                if(a==0):
+                    return True
+        return False

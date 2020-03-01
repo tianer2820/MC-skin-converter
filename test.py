@@ -16,8 +16,7 @@ def processSkin(filePath):
         print("file size wrong, skip: "+filePath);
         return
     skin = Skin(image)
-    skin.fixRightArm()
-    skin.fixLeftArm()
+    skin.fixArms()
     skin.getOutput().save("output." + filePath )
     skin.getDegradedOutput().save("output2." + filePath)
     skin.mergeDown()
