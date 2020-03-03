@@ -103,8 +103,10 @@ class Skin:
         return image
         
     def fixArms(self):
-        self.fixRightArm()
-        self.fixLeftArm()
+        self.fixRightArm(self.rightArm)
+        self.fixRightArm(self.rightArm2)
+        self.fixLeftArm(self.leftArm)
+        self.fixLeftArm(self.leftArm2)
 
     """
     Use skin of left arm to replaced right arm.
@@ -166,9 +168,10 @@ class Skin:
     """
     The female skin has lost 1 pixel of arm,
     and older skin do not support it.
+    
+    :param rightArmImage: Pillow.Image
     """
-    def fixRightArm(self):
-        rightArmImage = self.rightArm
+    def fixRightArm(self, rightArmImage):
         imageDraw =  ImageDraw.Draw(rightArmImage)
         #fix yaw
         handImage = self.cropImage(rightArmImage, (7,0),(3,4))
@@ -189,9 +192,10 @@ class Skin:
     """
     The female skin has lost 1 pixel of arm,
     and older skin do not support it.
+    
+    :param leftArmImage: Pillow.Image
     """
-    def fixLeftArm(self):
-        leftArmImage = self.leftArm
+    def fixLeftArm(self, leftArmImage):
         #move hand
         self.cutAndMoveImage(leftArmImage, (7,0), (3,4), (9,0))
         #move side arm1
