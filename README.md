@@ -1,9 +1,40 @@
-﻿Skin Converter [0.1.0]
+Skin Converter
 ======================
 
-**Requirements:** Python, Python Imaging Library (PIL)
+**Requirements:** Python, Python Imaging Library (PIL), Argparse
 
 Simple batch conversion tools for migration between compatible skin formats.
+
+
+convert.py
+----
+Convert format 1.8 to format 1.7, with new features and options.
+
+### Features
+- Auto detect slimmer arm.
+- Fill blank voxel up which is slimmer arm.
+- Merge overlay down
+- Replace right leg/arm by left.
+- Functions are selectable.
+
+**Usage:** `./convert.py [-h] [-f {0,1}] [-l {arm,leg,both}] [-k {0,1}] [-m {0,1}] source`
+( `python3 convert.py [-h] [-f {0,1}] [-l {arm,leg,both}] [-k {0,1}] [-m {0,1}] source` )
+
+### Using Left Arm
+![](./img/left-arm.png)
+
+### Using Left Arm And Leg
+![](./img/left-both.png)
+
+### Merge Down
+![](./img/merge-down.png)
+
+### Slim Arm Repaired
+![](./img/slim-repair.png)
+
+### Demo Images
+The skins had using to demonstrates are render by: http://minecraft.novaskin.me/
+[![](https://i.creativecommons.org/l/by-nc-sa/3.0/tw/88x31.png)](https://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 format17.py
 -----------
@@ -30,8 +61,8 @@ Convert format 1.7 to format 1.8
 python format18.py skins/textures
 ```
 
-Notes
+⚠️Notes
 -----
 
-Output images are RGBA mode PNG and will overwrite the original image without warning.
+Output images are RGBA mode PNG and will **overwrite the original image without warning.**
 Be sure you have a backup just in case things go wrong. 
